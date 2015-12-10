@@ -25,12 +25,19 @@ IceCream::IceCream(){
         flowIndex = ofToString(i + 10);
         flowAnimation[i].loadImage("iceCreamFlow/iceCream_startNew000" + flowIndex + ".png");
     }
+    string tempChocoIndex;
+    for(int i =0; i< CHOCOIMAGES; i++){
+        tempChocoIndex = ofToString(i);
+        chocoAnimation[i].loadImage("toppings/iceCreamChoco00" + tempChocoIndex + ".png");
+    }
     
-    //load cone
-    //coneFull.loadImage("iceCreamCone.png");
     coneFront.loadImage("iceCreamConeFront.png");
-    
-    
+    coneFull.loadImage("iceCreamCone.png");
+//    string tempWinkIndex;
+//    for(int i =0; i < WINKIMAGES; i++){
+//        tempWinkIndex = ofToString(i + 10);
+//        winkAnimation[i].loadImage("specialEffects/wink1_000" + tempWinkIndex + ".png");
+//    }
     scaleFactor = 0.5;
     
     height = lickAnimation[0].getHeight() * scaleFactor;
@@ -201,17 +208,18 @@ void IceCream::level3(){
     move();
 }
 void IceCream::level5(){
-//    moveIncrement = 6;
     meltRate = 10;
     draw();
     move();
+    if (lickState ==0){
+    chocoAnimation[CHOCOIMAGES - 1].draw(pos.x, pos.y, width, height);
+    }
     if (gotLick){
         brainFreeze();
     }
     cout<<"brainfrozen? " << brainFrozen << endl;
 }
 void IceCream::level7(){
-//    moveIncrement = 7;
     meltRate = 5;
     draw();
     move();
@@ -219,7 +227,20 @@ void IceCream::level7(){
         brainFreeze();
     }
     cout<<"brainfrozen? " << brainFrozen << endl;
+    //if (lickState ==10){
+        //win();
+    //}
 }
+
+//void IceCream::level8(){
+//    if (ofGetFrameNum()% 5== 0 && winkIndex < WINKIMAGES -1){
+//        winkIndex += 1;
+//    }
+//    winkAnimation[winkIndex].draw(pos.x, pos.y);
+//    if(winkIndex == WINKIMAGES -1){
+//        gameLevel += 1;
+//    }
+//}
 
 void IceCream::reset(){
     if (progressLevel){
@@ -239,17 +260,41 @@ void IceCream::resetWholeGame(){
 }
 
 void IceCream::flow(){
+    coneFull.draw(pos.x - coneAlignment, pos.y, width, height);
+
     if (ofGetFrameNum() % flowSpeed == 0){
         flowIndex = flowIndex + 1;
     }
-    flowAnimation[flowIndex].draw(pos.x,pos.y,width,height);
-    coneFront.draw(pos.x - coneAlignment, pos.y, width, height);
-    if (flowIndex == FLOWIMAGES){
+    flowAnimation[flowIndex].draw(pos.x - flowAlignment,pos.y,width,height);
+    if (flowIndex == FLOWIMAGES ){
         flowing = false;
-        gameLevel +=1;
+        if(gameLevel !=4){
+            gameLevel +=1;
+        }
+    }
+    if (gameLevel ==4){
+        if(ofGetFrameNum() % chocoSpeed == 0){
+            chocoIndex = chocoIndex + 1;
+        }
+        chocoAnimation[chocoIndex].draw(pos.x, pos.y, width * chocoScale, height * chocoScale);
+        if(chocoIndex == CHOCOIMAGES){
+            gameLevel +=1;
+        }
     }
     cout << "flow index " << flowIndex << endl;
+    lickState = 0;
 }
+
+//void IceCream::win(){
+//    if(ofGetFrameNum() % flowSpeed == 0 && winkIndex < WINKIMAGES){
+//        winkIndex = winkIndex + 1;
+//    }
+//    if(winkIndex == WINKIMAGES - 1){
+//        winkIndex = 0;
+//    }
+//    cout<<"wink index: " << winkIndex<<endl;
+//    winkAnimation[winkIndex].draw(pos.x, pos.y, width, height);
+//}
 
 void IceCream::brainFreeze(){
     if (gotLick){

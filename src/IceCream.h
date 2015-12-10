@@ -10,7 +10,9 @@
 
 #define MAXIMAGES 75
 #define FLOWIMAGES 14
-
+#define CHOCOIMAGES 22
+////////////////adding win animation
+//#define WINKIMAGES 23
 
 class IceCream{
 public:
@@ -27,24 +29,37 @@ public:
     void level3();
     void level5();
     void level7();
+    void level8();
     
     void brainFreeze();
     //resetting level data/ positioning ice cream in middle
     void reset();
     //when lose, resetting the whole game to level 0
     void resetWholeGame();
+    //void win();
     
+   // bool won = false;
     bool brainFrozen = false;
     bool gotLick = false;
     bool flowing = true;
-    int meltIndex;
-    int lickIndex;
+    int meltIndex = 0;
+    int lickIndex = 0;
     int flowIndex = 0;
+    //int winkIndex = 0;
+    
+    int chocoIndex = 0;
+    int chocoSpeed = 5;
     
     ofImage lickAnimation[MAXIMAGES];
     ofImage meltAnimation[MAXIMAGES];
     ofImage flowAnimation[FLOWIMAGES];
+    ofImage chocoAnimation[CHOCOIMAGES];
+    /////////winanimation
+    //ofImage winkAnimation[WINKIMAGES];
     ofImage coneFront;
+    
+    
+    ////////coneFull needs to be allocated
     ofImage coneFull;
     
     
@@ -83,7 +98,12 @@ public:
     int meltRate = 15;
     
     int coneAlignment = 3;
+    //////flowAlignment needs to be fudged around with
+    int flowAlignment = 30;
     int flowSpeed = 10;
     
     bool dripDeath = false;
+    bool won = false;
+    
+    float chocoScale = 0.5297;
 };

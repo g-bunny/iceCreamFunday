@@ -21,6 +21,6 @@ void UI::update(){
 }
 
 void UI::draw(){
-    upperTeeth.draw(0,-50,ofGetWindowWidth(), upperTeeth.getHeight() * scaleFactor);
+    //upperTeeth.draw(0,-50,ofGetWindowWidth(), upperTeeth.getHeight() * scaleFactor);
     lowerTeeth.draw(0, ofGetWindowHeight() - lowerTeeth.getHeight() + 200, ofGetWindowWidth(), lowerTeeth.getHeight() * scaleFactor);
 }

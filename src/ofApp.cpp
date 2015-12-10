@@ -25,7 +25,7 @@ void ofApp::setup(){
         kinectFarThresh = 250;
     }
     lick.loadSound("sounds/slurp2.wav");
-    lick.setVolume(0.75f);
+    lick.setVolume(0.85f);
     lick.setMultiPlay(false);
 
     music.loadSound("sounds/ICE CREAM LICK (Original Mix) - Final Mix 1 - Siyoung 2015 (24 Bit MSTR).wav");
@@ -139,6 +139,8 @@ void ofApp::draw(){
         }
     } else if (iceCream->gameLevel == 7){
         iceCream->level7();
+//    } else if (iceCream->gameLevel == 8){
+//        iceCream->level8();
     }
         teeth->draw();
     

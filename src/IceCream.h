@@ -9,7 +9,7 @@
 #include "ofMain.h"
 
 #define MAXIMAGES 75
-#define FLOWIMAGES 34
+#define FLOWIMAGES 14
 
 
 class IceCream{
@@ -83,7 +83,7 @@ public:
     int meltRate = 15;
     
     int coneAlignment = 3;
-    int flowSpeed = 6;
+    int flowSpeed = 10;
     
     bool dripDeath = false;
 };

@@ -22,8 +22,8 @@ IceCream::IceCream(){
     }
     string flowIndex;
     for(int i =0; i< FLOWIMAGES; i++){
-        flowIndex = ofToString(i);
-        flowAnimation[i].loadImage("iceCreamFlow/iceCream_start00" + flowIndex + ".png");
+        flowIndex = ofToString(i + 10);
+        flowAnimation[i].loadImage("iceCreamFlow/iceCream_startNew000" + flowIndex + ".png");
     }
     
     //load cone
@@ -230,6 +230,7 @@ void IceCream::reset(){
     pos.x = origPos.x;
     pos.y = origPos.y;
     flowIndex = 0;
+    lickState = 0;
 }
 
 void IceCream::resetWholeGame(){
@@ -242,7 +243,7 @@ void IceCream::flow(){
         flowIndex = flowIndex + 1;
     }
     flowAnimation[flowIndex].draw(pos.x,pos.y,width,height);
-    coneFull.draw(pos.x, pos.y);
+    coneFront.draw(pos.x - coneAlignment, pos.y, width, height);
     if (flowIndex == FLOWIMAGES){
         flowing = false;
         gameLevel +=1;

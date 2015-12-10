@@ -52,7 +52,7 @@ void ofApp::update(){
         //tonguePos = kinect->tongueTip pos
         
         if(kinect.isFrameNew()) {
-            //**** commented this out because breaking on miri's build ****
+
             grayImage.setFromPixels(kinect.getDepthPixels(), kinect.width, kinect.height);            grayThreshNear = grayImage;
             grayThreshFar = grayImage;
             grayThreshNear.threshold(kinectNearThresh, true);
@@ -100,20 +100,45 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+    if (iceCream->gameLevel == 0 ||iceCream->gameLevel == 2||iceCream->gameLevel == 4 || iceCream->gameLevel ==6){
+        iceCream->flowing = true;
+        iceCream->dripDeath = false;
+    }
+    if (iceCream->gameLevel >= 8){
+        iceCream->gameLevel = 0;
+    }
     bg->draw();
     //ofPushMatrix();
     //ofTranslate(ofGetScreenWidth()/2,0);
 //    iceCream->draw();
 //    iceCream->move();
     //ofPopMatrix();
-
+    if (iceCream->gameLevel == 0){
+        if (iceCream->flowing){
+        iceCream->flow();
+        }
+    }
     if (iceCream->gameLevel ==1){
         iceCream->level1();
     } else if (iceCream->gameLevel ==2){
-        iceCream->level2();
-
+        if (iceCream->flowing){
+            iceCream->flow();
+        }
     } else if (iceCream->gameLevel == 3){
         iceCream->level3();
+    } else if (iceCream->gameLevel == 4){
+        if (iceCream->flowing){
+            iceCream->flow();
+        }
+    } else if (iceCream->gameLevel == 5){
+        iceCream->level5();
+        
+    } else if (iceCream->gameLevel == 6){
+        if (iceCream->flowing){
+            iceCream->flow();
+        }
+    } else if (iceCream->gameLevel == 7){
+        iceCream->level7();
     }
         teeth->draw();
     

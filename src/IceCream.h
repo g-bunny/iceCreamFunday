@@ -9,6 +9,7 @@
 #include "ofMain.h"
 
 #define MAXIMAGES 75
+#define FLOWIMAGES 34
 
 
 class IceCream{
@@ -19,20 +20,30 @@ public:
     void melt();
     void move();
     void sprinkles();
+    void flow();
     bool collision(ofVec2f checkPos);
     
     void level1();
-    void level2();
     void level3();
+    void level5();
+    void level7();
     
     void brainFreeze();
+    //resetting level data/ positioning ice cream in middle
+    void reset();
+    //when lose, resetting the whole game to level 0
+    void resetWholeGame();
     
     bool brainFrozen = false;
     bool gotLick = false;
-    int imageIndex;
+    bool flowing = true;
+    int meltIndex;
+    int lickIndex;
+    int flowIndex = 0;
     
     ofImage lickAnimation[MAXIMAGES];
     ofImage meltAnimation[MAXIMAGES];
+    ofImage flowAnimation[FLOWIMAGES];
     ofImage coneFront;
     ofImage coneFull;
     
@@ -63,11 +74,16 @@ public:
     
     bool progressLevel = false;
     
-    void reset();
-    int gameLevel = 1;
+    int gameLevel = 0;
     
     int speedLimit = 200;
     int savedLickFrame;
     int currentLickFrame;
     
+    int meltRate = 15;
+    
+    int coneAlignment = 3;
+    int flowSpeed = 6;
+    
+    bool dripDeath = false;
 };

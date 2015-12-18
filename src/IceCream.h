@@ -13,6 +13,7 @@
 #define CHOCOIMAGES 22
 ////////////////adding win animation
 //#define WINKIMAGES 23
+#define NUMOFSPRINKLES 4
 
 class IceCream{
 public:
@@ -21,7 +22,7 @@ public:
     void update();
     void melt();
     void move();
-    void sprinkles();
+    void drawSprinkles();
     void flow();
     bool collision(ofVec2f checkPos);
     
@@ -48,7 +49,7 @@ public:
     //int winkIndex = 0;
     
     int chocoIndex = 0;
-    int chocoSpeed = 5;
+    int chocoSpeed = 9;
     
     ofImage lickAnimation[MAXIMAGES];
     ofImage meltAnimation[MAXIMAGES];
@@ -74,10 +75,8 @@ public:
     float moveIncrement = 5;
     
     //sprinkles position
-    float sprinkPosX;
-    float sprinkPosY;
-    
-    //string
+    ofVec2f sprinklePos[NUMOFSPRINKLES];
+    ofImage sprinkle[NUMOFSPRINKLES];
     
     //ice cream colliders, 0-3
     ofRectangle icLevels[4];
@@ -105,5 +104,5 @@ public:
     bool dripDeath = false;
     bool won = false;
     
-    float chocoScale = 0.5297;
+    //float chocoScale = 0.5297;
 };

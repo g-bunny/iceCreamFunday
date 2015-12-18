@@ -29,6 +29,15 @@ IceCream::IceCream(){
     for(int i =0; i< CHOCOIMAGES; i++){
         tempChocoIndex = ofToString(i);
         chocoAnimation[i].loadImage("toppings/iceCreamChoco00" + tempChocoIndex + ".png");
+        chocoAnimation[i].resize(1908, 1431);
+        //chocoAnimation[i].crop(446,0,1017,1431);
+        chocoAnimation[i].crop(486, 0, 1057, 1431);
+    }
+    string tempSprindex;
+    for (int i = 0; i < NUMOFSPRINKLES; i++){
+        tempSprindex = ofToString(i + 1);
+        sprinkle[i].loadImage("toppings/sprinkle_" + tempSprindex + ".png");
+        sprinkle[i].resize(sprinkle[i].width * 0.6, sprinkle[i].height * 0.6);
     }
     
     coneFront.loadImage("iceCreamConeFront.png");
@@ -206,6 +215,7 @@ void IceCream::level3(){
     meltRate = 15;
     draw();
     move();
+    drawSprinkles();
 }
 void IceCream::level5(){
     meltRate = 10;
@@ -276,7 +286,7 @@ void IceCream::flow(){
         if(ofGetFrameNum() % chocoSpeed == 0){
             chocoIndex = chocoIndex + 1;
         }
-        chocoAnimation[chocoIndex].draw(pos.x, pos.y, width * chocoScale, height * chocoScale);
+        chocoAnimation[chocoIndex].draw(pos.x, pos.y, width, height);
         if(chocoIndex == CHOCOIMAGES){
             gameLevel +=1;
         }
@@ -307,4 +317,25 @@ void IceCream::brainFreeze(){
         brainFrozen = false;
     }
     savedLickFrame = currentLickFrame;
+}
+
+void IceCream::drawSprinkles(){
+    if (lickState ==0){
+        sprinkle[0].draw(pos.x + lvlX[0]+ 20, pos.y + 50 + 20);
+    }
+    if (lickState <= 2){
+        sprinkle[1].draw(pos.x + lvlX[1] + 80, pos.y + 150 + 30);
+        sprinkle[0].draw(pos.x + lvlX[1] + 180, pos.y + 150 + 50);
+    }
+    if (lickState <= 5){
+        sprinkle[2].draw(pos.x + lvlX[2] + 130, pos.y + 230 + 50);
+        sprinkle[3].draw(pos.x + lvlX[2] + 30, pos.y + 230 + 50);
+        sprinkle[1].draw(pos.x + lvlX[2] + 230, pos.y + 230 + 50);
+    }
+    if (lickState <=8){
+        sprinkle[3].draw(pos.x + lvlX[3] + 300, pos.y + 310 + 60);
+        sprinkle[1].draw(pos.x + lvlX[3] + 100, pos.y + 310 + 50);
+        sprinkle[2].draw(pos.x + lvlX[3] + 200, pos.y + 310 + 40);
+        sprinkle[0].draw(pos.x + lvlX[3] + 360, pos.y + 310 + 30);
+    }
 }

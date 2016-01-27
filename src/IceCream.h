@@ -11,9 +11,9 @@
 #define MAXIMAGES 75
 #define FLOWIMAGES 14
 #define CHOCOIMAGES 22
-////////////////adding win animation
-//#define WINKIMAGES 23
+#define WINKIMAGES 23
 #define NUMOFSPRINKLES 4
+#define CHOCOMELT 3
 
 class IceCream{
 public:
@@ -23,13 +23,19 @@ public:
     void melt();
     void move();
     void drawSprinkles();
+    void drawChoco();
     void flow();
     bool collision(ofVec2f checkPos);
     
+    //gameLevel 1 = level1
     void level1();
+    //gameLevel 3 = level2
+    void level2();
+    //gameLevel 5 = level3
     void level3();
-    void level5();
-    void level7();
+    //gameLevel 7 = level4
+    void level4();
+    
     void level8();
     
     void brainFreeze();
@@ -56,8 +62,9 @@ public:
     ofImage flowAnimation[FLOWIMAGES];
     ofImage chocoAnimation[CHOCOIMAGES];
     /////////winanimation
-    //ofImage winkAnimation[WINKIMAGES];
+    ofImage winkAnimation[WINKIMAGES];
     ofImage coneFront;
+    ofImage chocoMeltAnimation[CHOCOMELT];
     
     
     ////////coneFull needs to be allocated
@@ -87,7 +94,6 @@ public:
     //keyframes of icecream disappearance: 29, 38, 43, 47, 51, 56, 60, 64, 69, 77
     
     bool progressLevel = false;
-    
     int gameLevel = 0;
     
     int speedLimit = 200;

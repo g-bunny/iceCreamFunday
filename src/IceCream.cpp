@@ -39,6 +39,13 @@ IceCream::IceCream(){
         sprinkle[i].loadImage("toppings/sprinkle_" + tempSprindex + ".png");
         sprinkle[i].resize(sprinkle[i].width * 0.6, sprinkle[i].height * 0.6);
     }
+    string tempChocoMeltIndex;
+    for (int i = 0; i < CHOCOMELT; i++){
+        tempChocoMeltIndex = ofToString(i);
+        chocoMeltAnimation[i].loadImage("toppings/chocoMelt00" + tempChocoMeltIndex + ".png");
+        chocoMeltAnimation[i].resize(1908, 1431);
+        chocoMeltAnimation[i].crop(486, 0, 1057, 1431);
+    }
     
     coneFront.loadImage("iceCreamConeFront.png");
     coneFull.loadImage("iceCreamCone.png");
@@ -81,10 +88,10 @@ void IceCream::draw(){
     ofSetColor(255,0,0);
     ofNoFill();
     // **** collision detection rectangles ****
-    ofRect(pos.x, pos.y, width, height);
-    for (int i=0; i<4; i++){
-        ofRect(icLevels[i].getTopLeft(), icLevels[i].getWidth(), icLevels[i].getHeight());
-    }
+//    ofRect(pos.x, pos.y, width, height);
+//    for (int i=0; i<4; i++){
+//        ofRect(icLevels[i].getTopLeft(), icLevels[i].getWidth(), icLevels[i].getHeight());
+//    }
     ofPopStyle();
     if (dripDeath){
         resetWholeGame();
@@ -210,36 +217,30 @@ void IceCream::level1(){
     meltRate = 1000;
     draw();
 }
-void IceCream::level3(){
+void IceCream::level2(){
 //    moveIncrement = 5;
     meltRate = 15;
     draw();
     move();
     drawSprinkles();
 }
-void IceCream::level5(){
+void IceCream::level3(){
+    drawChoco();
+}
+void IceCream::level4(){
     meltRate = 10;
     draw();
     move();
+    cout<<"lick state: "<<lickState<<endl;
     if (lickState ==0){
-    chocoAnimation[CHOCOIMAGES - 1].draw(pos.x, pos.y, width, height);
+        chocoMeltAnimation[0].draw(pos.x, pos.y, width, height);
     }
-    if (gotLick){
-        brainFreeze();
+    if (lickState == 1){
+        chocoMeltAnimation[1].draw(pos.x, pos.y, width, height);
     }
-    cout<<"brainfrozen? " << brainFrozen << endl;
-}
-void IceCream::level7(){
-    meltRate = 5;
-    draw();
-    move();
-    if (gotLick){
-        brainFreeze();
+    if (lickState == 2){
+        chocoMeltAnimation[2].draw(pos.x, pos.y, width, height);
     }
-    cout<<"brainfrozen? " << brainFrozen << endl;
-    //if (lickState ==10){
-        //win();
-    //}
 }
 
 //void IceCream::level8(){
@@ -278,18 +279,8 @@ void IceCream::flow(){
     flowAnimation[flowIndex].draw(pos.x - flowAlignment,pos.y,width,height);
     if (flowIndex == FLOWIMAGES ){
         flowing = false;
-        if(gameLevel !=4){
+
             gameLevel +=1;
-        }
-    }
-    if (gameLevel ==4){
-        if(ofGetFrameNum() % chocoSpeed == 0){
-            chocoIndex = chocoIndex + 1;
-        }
-        chocoAnimation[chocoIndex].draw(pos.x, pos.y, width, height);
-        if(chocoIndex == CHOCOIMAGES){
-            gameLevel +=1;
-        }
     }
     cout << "flow index " << flowIndex << endl;
     lickState = 0;
@@ -337,5 +328,17 @@ void IceCream::drawSprinkles(){
         sprinkle[1].draw(pos.x + lvlX[3] + 100, pos.y + 310 + 50);
         sprinkle[2].draw(pos.x + lvlX[3] + 200, pos.y + 310 + 40);
         sprinkle[0].draw(pos.x + lvlX[3] + 360, pos.y + 310 + 30);
+    }
+}
+
+void IceCream::drawChoco(){
+    if(ofGetFrameNum() % chocoSpeed == 0){
+        chocoIndex = chocoIndex + 1;
+    }
+    lickAnimation[1].draw(pos.x, pos.y, width, height);
+    chocoAnimation[chocoIndex].draw(pos.x, pos.y, width, height);
+    if(chocoIndex == CHOCOIMAGES){
+        chocoAnimation[CHOCOIMAGES - 1].draw(pos.x, pos.y, width, height);
+        gameLevel +=1;
     }
 }

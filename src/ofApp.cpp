@@ -108,41 +108,36 @@ void ofApp::draw(){
         iceCream->gameLevel = 0;
     }
     bg->draw();
-    //ofPushMatrix();
-    //ofTranslate(ofGetScreenWidth()/2,0);
-//    iceCream->draw();
-//    iceCream->move();
-    //ofPopMatrix();
+
     if (iceCream->gameLevel == 0){
         if (iceCream->flowing){
         iceCream->flow();
         }
     }
     if (iceCream->gameLevel ==1){
+        //stationary and no toppings
         iceCream->level1();
     } else if (iceCream->gameLevel ==2){
+        //ice cream flow anmation
         if (iceCream->flowing){
             iceCream->flow();
         }
     } else if (iceCream->gameLevel == 3){
-        iceCream->level3();
+        //moving and sprinkles
+        iceCream->level2();
     } else if (iceCream->gameLevel == 4){
+        //ice cream flow animation
         if (iceCream->flowing){
             iceCream->flow();
         }
     } else if (iceCream->gameLevel == 5){
-        iceCream->level5();
-        
+        //choco flow animation
+        iceCream->level3();
     } else if (iceCream->gameLevel == 6){
-        if (iceCream->flowing){
-            iceCream->flow();
-        }
-    } else if (iceCream->gameLevel == 7){
-        iceCream->level7();
-//    } else if (iceCream->gameLevel == 8){
-//        iceCream->level8();
+        //moving and choco
+        iceCream->level4();
     }
-        teeth->draw();
+    teeth->draw();
     
     if (drawKinect){
         grayImage.draw(10, 320, 400, 300);

@@ -11,7 +11,7 @@
 #define MAXIMAGES 75
 #define FLOWIMAGES 14
 #define CHOCOIMAGES 22
-#define WINKIMAGES 23
+#define WINKIMAGES 17
 #define NUMOFSPRINKLES 4
 #define CHOCOMELT 3
 
@@ -31,12 +31,14 @@ public:
     void level1();
     //gameLevel 3 = level2
     void level2();
-    //gameLevel 5 = level3
+    //gameLevel 6 = level3
     void level3();
     //gameLevel 7 = level4
     void level4();
     
     void level8();
+    
+    void win();
     
     void brainFreeze();
     //resetting level data/ positioning ice cream in middle
@@ -52,7 +54,7 @@ public:
     int meltIndex = 0;
     int lickIndex = 0;
     int flowIndex = 0;
-    //int winkIndex = 0;
+    int winkIndex = 0;
     
     int chocoIndex = 0;
     int chocoSpeed = 9;

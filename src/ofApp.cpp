@@ -136,6 +136,8 @@ void ofApp::draw(){
     } else if (iceCream->gameLevel == 6){
         //moving and choco
         iceCream->level4();
+    } else if (iceCream->gameLevel ==7){
+        iceCream->win();
     }
     teeth->draw();
     

@@ -78,6 +78,13 @@ IceCream::IceCream(){
     icLevels[2].set(pos.x + lvlX[2], pos.y + 230, 350, 80);
     icLevels[3].set(pos.x + lvlX[3], pos.y + 310, 400, 70);
     
+    winSound.loadSound("sounds/win.wav");
+    winSound.setVolume(0.85f);
+    winSound.setMultiPlay(false);
+    
+    loseSound.loadSound("sounds/lose.wav");
+    loseSound.setVolume(0.85f);
+    loseSound.setMultiPlay(false);
 }
 
 void IceCream::draw(){
@@ -221,17 +228,19 @@ void IceCream::level1(){
 void IceCream::level2(){
 //    moveIncrement = 5;
     meltRate = 15;
-    draw();
     move();
+    draw();
     drawSprinkles();
 }
 void IceCream::level3(){
     drawChoco();
 }
 void IceCream::level4(){
+    
     meltRate = 10;
-    draw();
     move();
+
+    draw();
     cout<<"lick state: "<<lickState<<endl;
     if (lickState ==0){
         chocoMeltAnimation[0].draw(pos.x, pos.y, width, height);
@@ -272,6 +281,8 @@ void IceCream::reset(){
 void IceCream::resetWholeGame(){
     reset();
     gameLevel = 0;
+    winkIndex = 0;
+    chocoIndex = 0;
 }
 
 void IceCream::flow(){
@@ -293,6 +304,9 @@ void IceCream::flow(){
 void IceCream::win(){
     if(ofGetFrameNum() % flowSpeed == 0 && winkIndex < WINKIMAGES - 1){
         winkIndex = winkIndex + 1;
+    }
+    if(winkIndex == 6){
+        winSound.play();
     }
 //    if(winkIndex == WINKIMAGES - 1){
 //        winkIndex = 0;
@@ -343,9 +357,9 @@ void IceCream::drawChoco(){
         chocoIndex = chocoIndex + 1;
     }
     lickAnimation[1].draw(pos.x, pos.y, width, height);
-    chocoAnimation[chocoIndex].draw(pos.x, pos.y, width, height);
+    chocoAnimation[chocoIndex].draw(pos.x- coneAlignment, pos.y, width, height);
     if(chocoIndex == CHOCOIMAGES){
-        chocoAnimation[CHOCOIMAGES - 1].draw(pos.x, pos.y, width, height);
+        chocoAnimation[CHOCOIMAGES - 1].draw(pos.x- coneAlignment, pos.y, width, height);
         gameLevel +=1;
         reset();
     }

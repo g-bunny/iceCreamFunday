@@ -31,17 +31,17 @@ void ofApp::setup(){
     music.loadSound("sounds/ICE CREAM LICK (Original Mix) - Final Mix 1 - Siyoung 2015 (24 Bit MSTR).wav");
     music.setVolume(0.7f);
     music.setLoop(true);
-    ofSetFrameRate(60);
-    
-        music.play();
     
 
+    
+    ofSetFrameRate(60);
+    
+    music.play();
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
 
-    
     bg->update();
     iceCream->update();
 
@@ -211,8 +211,10 @@ void ofApp::keyPressed(int key){
             }
             cout << "kinectFarThresh: " << kinectFarThresh << endl;
             break;
+        case ('f'):
+            ofToggleFullscreen();
     }
-    
+
 }
 
 //--------------------------------------------------------------

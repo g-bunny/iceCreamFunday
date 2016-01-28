@@ -112,5 +112,6 @@ public:
     bool dripDeath = false;
     bool won = false;
     
-    //float chocoScale = 0.5297;
+    ofSoundPlayer winSound;
+    ofSoundPlayer loseSound;
 };

@@ -37,7 +37,7 @@ IceCream::IceCream(){
     for (int i = 0; i < NUMOFSPRINKLES; i++){
         tempSprindex = ofToString(i + 1);
         sprinkle[i].loadImage("toppings/sprinkle_" + tempSprindex + ".png");
-        sprinkle[i].resize(sprinkle[i].width * 0.6, sprinkle[i].height * 0.6);
+        sprinkle[i].resize(sprinkle[i].getWidth() * 0.6, sprinkle[i].getHeight() * 0.6);
     }
     string tempChocoMeltIndex;
     for (int i = 0; i < CHOCOMELT; i++){

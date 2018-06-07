@@ -2,6 +2,7 @@
 
 #include "ofxKinect.h"
 #include "ofxOpenCv.h"
+#include "ofxGui.h"
 
 
 #include "ofMain.h"

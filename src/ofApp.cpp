@@ -53,7 +53,9 @@ void ofApp::update(){
         
         if(kinect.isFrameNew()) {
 
-            grayImage.setFromPixels(kinect.getDepthPixels(), kinect.width, kinect.height);            grayThreshNear = grayImage;
+            //grayImage.setFromPixels(kinect.getDepthPixels(), kinect.width, kinect.height);
+			grayImage.setFromPixels(kinect.getDepthPixels());
+			grayThreshNear = grayImage;
             grayThreshFar = grayImage;
             grayThreshNear.threshold(kinectNearThresh, true);
             grayThreshFar.threshold(kinectFarThresh);

@@ -11,8 +11,6 @@
 #include "UI.h"
 #include "Tongue.h"
 
-#define USE_KINECT false
-
 class ofApp : public ofBaseApp{
     
 public:
@@ -30,9 +28,9 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
     
-    Background * bg;
-    IceCream * iceCream;
-    UI * teeth;
+    Background bg;
+    IceCream iceCream;
+    UI teeth;
     
     Tongue tongue;
     //bool gotLick = false;
@@ -40,23 +38,26 @@ public:
     ofxKinect kinect;
     
     ofxCvColorImage colorImg;
-    
-    ofxCvGrayscaleImage grayImage; // grayscale depth image
+    ofxCvGrayscaleImage grayImage; 		// grayscale depth image
     ofxCvGrayscaleImage grayThreshNear; // the near thresholded image
-    ofxCvGrayscaleImage grayThreshFar; // the far thresholded image
-    
-    int kinectNearThresh;
-    int kinectFarThresh;
+    ofxCvGrayscaleImage grayThreshFar; 	// the far thresholded image
     
     ofxCvContourFinder contourFinder;
     
     int icLevelNum = 0;
     int winDuration = 120;
     
-    bool drawKinect = false;
-    
-    ofSoundPlayer lick;
+//    bool drawKinect = false;
+	
+    ofSoundPlayer lickSound;
     ofSoundPlayer music;
-
+	
+	ofxPanel gui;
+	ofParameter<int> kinectNearThresh, kinectFarThresh;
+	ofParameter<bool> bDrawKinect;
+	ofParameter<float> lickVolume, musicVolume;
+	ofParameter<float> bgFps;
+	
+	bool bHasKinect, bDrawGui;
     
 };

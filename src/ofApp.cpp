@@ -2,54 +2,68 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-   // ofSetFullscreen(true);
-    this->bg = new Background();
-    this->iceCream = new IceCream();
-    this->teeth = new UI();
-    
-    tongue = Tongue();
-    
-    //KINECT SETUP
-    
-    if (USE_KINECT){
-        kinect.setRegistration(true);
-        kinect.init();
-        kinect.open();
         
-        colorImg.allocate(kinect.width, kinect.height);
-        grayImage.allocate(kinect.width, kinect.height);
-        grayThreshNear.allocate(kinect.width, kinect.height);
-        grayThreshFar.allocate(kinect.width, kinect.height);
-        
-        kinectNearThresh= 255;
-        kinectFarThresh = 250;
-    }
-    lick.loadSound("sounds/slurp2.wav");
-    lick.setVolume(0.85f);
-    lick.setMultiPlay(false);
+    // KINECT SETUP
+    
+	kinect.setRegistration(true);
+	bHasKinect = kinect.init() && kinect.open();
+	
+	kinectNearThresh.set("kinect near thresh", 255, 0, 255);
+	kinectFarThresh.set("kinect far thresh", 250, 0, 255);
+	
+	bDrawKinect.set("draw kinect", false);
+	
+	// OPEN CV
+	
+	colorImg.allocate(kinect.width, kinect.height);
+	grayImage.allocate(kinect.width, kinect.height);
+	grayThreshNear.allocate(kinect.width, kinect.height);
+	grayThreshFar.allocate(kinect.width, kinect.height);
+	
+	// AUDIO
 
-    music.loadSound("sounds/ICE CREAM LICK (Original Mix) - Final Mix 1 - Siyoung 2015 (24 Bit MSTR).wav");
-    music.setVolume(0.7f);
-    music.setLoop(true);
-    
+	lickSound.load("sounds/slurp2.wav");
+	lickSound.setMultiPlay(false);
+	lickVolume.set("lick volume", 0.7f, 0.0f, 1.0f);
+	lickSound.setVolume(lickVolume);
 
-    
-    ofSetFrameRate(60);
-    
+	music.load("sounds/ICE CREAM LICK (Original Mix) - Final Mix 1 - Siyoung 2015 (24 Bit MSTR).wav");
+	music.setLoop(true);
+	musicVolume.set("music volume", 0.7f, 0.0f, 1.0f);
+	music.setVolume(musicVolume);
     music.play();
+	
+	// params
+	
+	bgFps.set("bg fps", 7.f, 0.1f, 60.f);
+	
+	gui.setup();
+	gui.add(kinectNearThresh);
+	gui.add(kinectFarThresh);
+	gui.add(lickVolume);
+	gui.add(musicVolume);
+	gui.add(bgFps);
+	
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
 
-    bg->update();
-    iceCream->update();
+    bg.update();
+    iceCream.update();
+
+	
+	// CONTROLLER POSITION
 
     ofVec2f tonguePos = ofVec2f(ofGetMouseX(), ofGetMouseY());
-    if (USE_KINECT){
+	
+	// USE KINECT IF ATTACHED
+	
+    if (bHasKinect){
         kinect.update();
         
-        //tonguePos = kinect->tongueTip pos
+        //tonguePos = kinect.tongueTip pos
         
         if(kinect.isFrameNew()) {
 
@@ -77,23 +91,26 @@ void ofApp::update(){
     if (tongue.isLicking){
         
         // if hasn't gotten ice cream yet on this lick
-        if (iceCream->gotLick == false){
+        if (iceCream.gotLick == false){
             
             /* check if tongue is touching ice cream */
-            if (iceCream->collision(tongue.pos)){
-                cout << "licked ice cream: " << ++(iceCream->lickState) << endl;
-                iceCream->gotLick = true;
-                lick.play();
+            if (iceCream.collision(tongue.pos)){
+				iceCream.lickState++;
+                cout << "licked ice cream: " << iceCream.lickState << endl;
+				// TODO: lick meter?
+				
+                iceCream.gotLick = true;
+                lickSound.play();
             }
             else {
-                iceCream->gotLick = false;
+                iceCream.gotLick = false;
             }
             
         }
         
     } else if (tongue.isMovingDown){
         
-        iceCream->gotLick = false;
+        iceCream.gotLick = false;
         
     }
     
@@ -102,53 +119,70 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    if (iceCream->gameLevel == 0 ||iceCream->gameLevel == 2||iceCream->gameLevel == 4 || iceCream->gameLevel ==6){
-        iceCream->flowing = true;
-        iceCream->dripDeath = false;
-    }
-    if (iceCream->gameLevel >= 8){
-        iceCream->gameLevel = 0;
-    }
-    bg->draw();
-
-    if (iceCream->gameLevel == 0){
-        if (iceCream->flowing){
-        iceCream->flow();
-        }
-    }
-    if (iceCream->gameLevel ==1){
-        //stationary and no toppings
-        iceCream->level1();
-    } else if (iceCream->gameLevel ==2){
-        //ice cream flow anmation
-        if (iceCream->flowing){
-            iceCream->flow();
-        }
-    } else if (iceCream->gameLevel == 3){
-        //moving and sprinkles
-        iceCream->level2();
-    } else if (iceCream->gameLevel == 4){
-        //ice cream flow animation
-        if (iceCream->flowing){
-            iceCream->flow();
-        }
-    } else if (iceCream->gameLevel == 5){
-        //choco flow animation
-        iceCream->level3();
-    } else if (iceCream->gameLevel == 6){
-        //moving and choco
-        iceCream->level4();
-    } else if (iceCream->gameLevel ==7){
-        iceCream->win();
-    }
-    teeth->draw();
+	
+	bg.draw();
+	
+	// ICE CREAM
+	// TODO: SEPARATE LEVEL LOGIC FROM DRAW FUNCTIONS
+	// (IceCream should save level state in update)
+	
+	if (iceCream.gameLevel == 0 ||iceCream.gameLevel == 2||iceCream.gameLevel == 4 || iceCream.gameLevel ==6){
+		iceCream.flowing = true;
+		iceCream.dripDeath = false;
+	}
+	if (iceCream.gameLevel >= 8){
+		iceCream.gameLevel = 0;
+	}
+	
+	
+	if (iceCream.gameLevel == 0){
+		if (iceCream.flowing){
+			iceCream.flow();
+		}
+	}
+	if (iceCream.gameLevel ==1){
+		//stationary and no toppings
+		iceCream.level1();
+	} else if (iceCream.gameLevel ==2){
+		//ice cream flow anmation
+		if (iceCream.flowing){
+			iceCream.flow();
+		}
+	} else if (iceCream.gameLevel == 3){
+		//moving and sprinkles
+		iceCream.level2();
+	} else if (iceCream.gameLevel == 4){
+		//ice cream flow animation
+		if (iceCream.flowing){
+			iceCream.flow();
+		}
+	} else if (iceCream.gameLevel == 5){
+		//choco flow animation
+		iceCream.level3();
+	} else if (iceCream.gameLevel == 6){
+		//moving and choco
+		iceCream.level4();
+	} else if (iceCream.gameLevel ==7){
+		iceCream.win();
+	}
+	
+	// DRAW TEETH over ice cream
+	
+    teeth.draw();
+	
+	
     
-    if (drawKinect){
+    if (bDrawKinect){
         grayImage.draw(10, 320, 400, 300);
         contourFinder.draw(10, 320, 400, 300);
     }
-    cout<<"game level: " <<iceCream->gameLevel<<endl;
-    
+	
+	// TODO:  level display on screen
+	cout<<"game level: " <<iceCream.gameLevel<<endl;
+	
+	if (bDrawGui){
+		gui.draw();
+	}
 }
 
 //--------------------------------------------------------------
@@ -170,51 +204,60 @@ void ofApp::keyPressed(int key){
             break;
             
         case (OF_KEY_UP):
-            cout << "lvlX[" << icLevelNum << "] is " << ++(iceCream->lvlX[icLevelNum]) << endl;
+            cout << "lvlX[" << icLevelNum << "] is " << ++(iceCream.lvlX[icLevelNum]) << endl;
             break;
         
         case (OF_KEY_DOWN):
-            cout << "lvlX[" << icLevelNum << "] is " << --(iceCream->lvlX[icLevelNum]) << endl;
+            cout << "lvlX[" << icLevelNum << "] is " << --(iceCream.lvlX[icLevelNum]) << endl;
             break;
-            
-        case ('k'):
-            if (USE_KINECT){
-                drawKinect = !drawKinect;
-                cout << "draw kinect: " << drawKinect << endl;
-            }
-            break;
-            
+			
+		case ('f'):
+			ofToggleFullscreen();
+			break;
+			
+		case ('g'):
+			bDrawGui = !bDrawGui;
+			break;
+			
+			// REMOVED FOR GUI CONTROL:
+			
+//        case ('k'):
+//            if (bHasKinect){
+//                bDrawKinect = !bDrawKinect;
+//                cout << "draw kinect: " << bDrawKinect << endl;
+//            }
+//            break;
+			
         // KINECT THRESHOLDING
-        case ('='):
-            kinectNearThresh++;
-            if (kinectNearThresh > 255){
-                kinectNearThresh = 255;
-            }
-            cout << "kinectNearThresh: " << kinectNearThresh << endl;
-            break;
-        case ('-'):
-            kinectNearThresh--;
-            if (kinectNearThresh < 0){
-                kinectNearThresh = 0;
-            }
-            cout << "kinectNearThresh: " << kinectNearThresh << endl;
-            break;
-        case ('0'):
-            kinectFarThresh++;
-            if (kinectFarThresh > 255){
-                kinectFarThresh = 255;
-            }
-            cout << "kinectFarThresh: " << kinectFarThresh << endl;
-            break;
-        case ('9'):
-            kinectFarThresh--;
-            if (kinectFarThresh < 0){
-                kinectFarThresh = 0;
-            }
-            cout << "kinectFarThresh: " << kinectFarThresh << endl;
-            break;
-        case ('f'):
-            ofToggleFullscreen();
+//        case ('='):
+//            kinectNearThresh++;
+//            if (kinectNearThresh > 255){
+//                kinectNearThresh = 255;
+//            }
+//            cout << "kinectNearThresh: " << kinectNearThresh << endl;
+//            break;
+//        case ('-'):
+//            kinectNearThresh--;
+//            if (kinectNearThresh < 0){
+//                kinectNearThresh = 0;
+//            }
+//            cout << "kinectNearThresh: " << kinectNearThresh << endl;
+//            break;
+//        case ('0'):
+//            kinectFarThresh++;
+//            if (kinectFarThresh > 255){
+//                kinectFarThresh = 255;
+//            }
+//            cout << "kinectFarThresh: " << kinectFarThresh << endl;
+//            break;
+//        case ('9'):
+//            kinectFarThresh--;
+//            if (kinectFarThresh < 0){
+//                kinectFarThresh = 0;
+//            }
+//            cout << "kinectFarThresh: " << kinectFarThresh << endl;
+//            break;
+
     }
 
 }

@@ -17,18 +17,18 @@ IceCream::IceCream(){
     string index;
     for(int i =0; i< MAXIMAGES; i++){
         index = ofToString(i + 10);
-        lickAnimation[i].loadImage("iceCream/iceCream000" + index + ".png");
-        meltAnimation[i].loadImage("iceCreamMelt/iceCreamMelt000" + index + "_bottom.png");
+        lickAnimation[i].load("iceCream/iceCream000" + index + ".png");
+        meltAnimation[i].load("iceCreamMelt/iceCreamMelt000" + index + "_bottom.png");
     }
     string flowIndex;
     for(int i =0; i< FLOWIMAGES; i++){
         flowIndex = ofToString(i + 10);
-        flowAnimation[i].loadImage("iceCreamFlow/iceCream_startNew000" + flowIndex + ".png");
+        flowAnimation[i].load("iceCreamFlow/iceCream_startNew000" + flowIndex + ".png");
     }
     string tempChocoIndex;
     for(int i =0; i< CHOCOIMAGES; i++){
         tempChocoIndex = ofToString(i);
-        chocoAnimation[i].loadImage("toppings/iceCreamChoco00" + tempChocoIndex + ".png");
+        chocoAnimation[i].load("toppings/iceCreamChoco00" + tempChocoIndex + ".png");
         chocoAnimation[i].resize(1908, 1431);
         //chocoAnimation[i].crop(446,0,1017,1431);
         chocoAnimation[i].crop(486, 0, 1057, 1431);
@@ -36,24 +36,24 @@ IceCream::IceCream(){
     string tempSprindex;
     for (int i = 0; i < NUMOFSPRINKLES; i++){
         tempSprindex = ofToString(i + 1);
-        sprinkle[i].loadImage("toppings/sprinkle_" + tempSprindex + ".png");
+        sprinkle[i].load("toppings/sprinkle_" + tempSprindex + ".png");
         sprinkle[i].resize(sprinkle[i].getWidth() * 0.6, sprinkle[i].getHeight() * 0.6);
     }
     string tempChocoMeltIndex;
     for (int i = 0; i < CHOCOMELT; i++){
         tempChocoMeltIndex = ofToString(i);
-        chocoMeltAnimation[i].loadImage("toppings/chocoMelt00" + tempChocoMeltIndex + ".png");
+        chocoMeltAnimation[i].load("toppings/chocoMelt00" + tempChocoMeltIndex + ".png");
         chocoMeltAnimation[i].resize(1908, 1431);
         chocoMeltAnimation[i].crop(486, 0, 1057, 1431);
     }
     string tempWinkIndex;
     for(int i =0; i < WINKIMAGES; i++){
         tempWinkIndex = ofToString(i);
-        winkAnimation[i].loadImage("specialEffects/wink1_000" + tempWinkIndex + ".png");
+        winkAnimation[i].load("specialEffects/wink1_000" + tempWinkIndex + ".png");
     }
     
-    coneFront.loadImage("iceCreamConeFront.png");
-    coneFull.loadImage("iceCreamCone.png");
+    coneFront.load("iceCreamConeFront.png");
+    coneFull.load("iceCreamCone.png");
 
     scaleFactor = 0.5;
     
@@ -78,11 +78,11 @@ IceCream::IceCream(){
     icLevels[2].set(pos.x + lvlX[2], pos.y + 230, 350, 80);
     icLevels[3].set(pos.x + lvlX[3], pos.y + 310, 400, 70);
     
-    winSound.loadSound("sounds/win.wav");
+    winSound.load("sounds/win.wav");
     winSound.setVolume(0.85f);
     winSound.setMultiPlay(false);
     
-    loseSound.loadSound("sounds/lose.wav");
+    loseSound.load("sounds/lose.wav");
     loseSound.setVolume(0.85f);
     loseSound.setMultiPlay(false);
 }

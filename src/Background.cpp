@@ -9,26 +9,24 @@
 
 #include "Background.h"
 
-#define MAXIMAGES 24
-
-ofImage bgAnimation[MAXIMAGES];
-
 Background::Background(){
     string index;
-    for(int i =0; i< MAXIMAGES; i++){
+    for(int i =0; i< N_BG_IMGS; i++){
         index = ofToString(i);
-        bgAnimation[i].loadImage("background/background" + index + ".png");
+        bgAnimation[i].load("background/background" + index + ".png");
     }
+	lastFrameChange = ofGetElapsedTimef();
+	frameDelay 		= 0.14f;	// ~ 7 fps
 }
 
 void Background::draw(){
-    bgAnimation[imageIndex].draw(0,0,ofGetScreenWidth(),ofGetScreenHeight());
+    bgAnimation[imageIndex].draw(0,0,ofGetWidth(),ofGetHeight());
 }
 
 void Background::update(){
-    if (ofGetFrameNum() % 7 == 0){
-        imageIndex = (imageIndex + 1) % MAXIMAGES;
+	float t = ofGetElapsedTimef();
+    if (t - frameDelay >= lastFrameChange){
+        imageIndex = (imageIndex + 1) % N_BG_IMGS;
+		lastFrameChange = t;
     }
-    //cout << imageIndex << endl;
-    
 }

@@ -10,7 +10,9 @@ void ofApp::setup(){
 	
 	kinectNearThresh.set("kinect near thresh", 225, 0, 255);
 	kinectFarThresh.set("kinect far thresh", 147, 0, 255);
-	
+	kinectRoiTL.set("kinect ROI TL", ofPoint(100,100), ofPoint(0,0), ofPoint(640,480));
+	kinectRoiBR.set("kinect ROI BR", ofPoint(540,360), ofPoint(0,0), ofPoint(640,480));
+	bUseKinect.set("use kinect", bHasKinect);
 	bDrawKinect.set("draw kinect", false);
 	
 	// OPEN CV
@@ -38,11 +40,31 @@ void ofApp::setup(){
 	bgFps.set("bg fps", 7.f, 0.1f, 60.f);
 	
 	gui.setup();
-	gui.add(kinectNearThresh);
-	gui.add(kinectFarThresh);
-	gui.add(lickVolume);
-	gui.add(musicVolume);
-	gui.add(bgFps);
+	gui.setName("SETTINGS");
+	gui.setHeaderBackgroundColor(ofColor::purple);
+	gui.setDefaultBackgroundColor(ofColor(50,0,50));
+	
+	gui.add(kinectStatusLabel.setup("kinect status", (bHasKinect ? "OK" : "NONE")));
+	kinectStatusLabel.setBackgroundColor(bHasKinect ? ofColor(0,75,25) : ofColor(75,0,25));
+	
+	kinectParams.setName("KINECT PARAMS");
+	kinectParams.add(bUseKinect);
+	kinectParams.add(bDrawKinect);
+	kinectParams.add(kinectNearThresh);
+	kinectParams.add(kinectFarThresh);
+	kinectParams.add(kinectRoiTL);
+	kinectParams.add(kinectRoiBR);
+	gui.add(kinectParams);
+	
+	soundParams.setName("SOUND PARAMS");
+	soundParams.add(lickVolume);
+	soundParams.add(musicVolume);
+	gui.add(soundParams);
+	
+	vizParams.setName("VIZ PARAMS");
+	vizParams.add(bgFps);
+	vizParams.add(bDrawTongueTip);
+	gui.add(vizParams);
 	
 	// listeners
 	
@@ -81,11 +103,76 @@ void ofApp::update(){
             grayThreshFar.threshold(kinectFarThresh);
             cvAnd(grayThreshNear.getCvImage(), grayThreshFar.getCvImage(), grayImage.getCvImage(), NULL);
             
-            // update the cv images
-            grayImage.flagImageChanged();
-            
-            contourFinder.findContours(grayImage, 10, (kinect.width*kinect.height)/2, 20, false);
-            contourFinder.findContours(grayImage, 400, 600, 1, false);
+			auto pix = grayImage.getPixels();
+			
+			
+			// CROP KINECT IMAGE
+			// TODO: change to cv ROI
+			int pixIndex = 0;
+			for (int y = 0; y < grayImage.getHeight(); y++){
+				for (int x = 0; x < grayImage.getWidth(); x++){
+					
+					// erase out of bounds pix
+					if 			(x < kinectRoiTL.get().x){
+						pix[pixIndex] = 0;
+					} else if 	(x > kinectRoiBR.get().x) {
+						pix[pixIndex] = 0;
+					} else if 	(y < kinectRoiTL.get().y) {
+						pix[pixIndex] = 0;
+					} else if 	(y > kinectRoiBR.get().y) {
+						pix[pixIndex] = 0;
+					}
+					
+					pixIndex++;
+				}
+			}
+			
+			// update the cv images
+			grayImage.flagImageChanged();
+			
+			contourFinder.findContours(grayImage, 200, (kinect.width*kinect.height)/2, 1, false);
+			
+			if (contourFinder.nBlobs > 0){
+				
+				tongueOutline = ofPolyline(contourFinder.blobs[0].pts);
+				tongueOutline.close();
+				tongueOutlineSmooth = tongueOutline.getSmoothed(20,1);
+				tongueOutlineSmooth.close();
+				
+//				if (!(DO_KINECT_FRONT)){
+				// note: assume top mounted kinect
+				
+				ofPoint tipTarget = contourFinder.blobs[0].centroid;
+				tipTarget.y = 0;
+				
+				tip = tongueOutlineSmooth.getClosestPoint(tipTarget);
+				tip.y += 10;
+				rawTip = tip;
+				
+				//get depth of tip
+				float d = kinect.getDistanceAt(tip.x, tip.y);
+				if (d > 0){
+					
+					//cout << "raw tip depth: " << d;
+					//cout << ", raw tip x: " << tip.x << endl;
+					
+					// TODO: move to params
+					tip.x = ofMap(tip.x, FULL_LEFT, FULL_RIGHT, 0, ofGetWidth(), true);
+					tip.y = ofMap(d, DEPTH_TOP, DEPTH_BOTTOM, 320, ofGetHeight(), true);
+					
+					tonguePos.set(tip);
+				}
+				
+//				} else {
+//
+//					ofPoint tip = contourFinder.blobs[0].centroid;
+//					// invert x
+//					tip.x = ofMap(tip.x, FULL_LEFT, FULL_RIGHT, ofGetWidth(), 0, true);
+//					tip.y = ofMap(tip.y, DEPTH_BOTTOM, DEPTH_TOP, ofGetHeight(), 0, true);
+//
+//					tonguePos.set(tip);
+//				}
+			}
         }
         
     }
@@ -101,9 +188,9 @@ void ofApp::update(){
             
             /* check if tongue is touching ice cream */
             if (iceCream.collision(tongue.pos)){
+				
 				iceCream.lickState++;
                 cout << "licked ice cream: " << iceCream.lickState << endl;
-				// TODO: lick meter?
 				
                 iceCream.gotLick = true;
                 lickSound.play();
@@ -178,13 +265,23 @@ void ofApp::draw(){
 	
 	
     
-    if (bDrawKinect){
-        grayImage.draw(10, 320, 400, 300);
-        contourFinder.draw(10, 320, 400, 300);
-    }
+	if (bDrawKinect){
+		grayImage.draw(10, 320, 400, 300);
+		contourFinder.draw(10, 320, 400, 300);
+		//tongueOutline.draw();
+		tongueOutlineSmooth.draw();
+		//ofSetColor(tipDepth, tipDepth, 0);
+		ofDrawCircle(tip, 5);
+		//ofSetColor(255);
+	}
+	if (bDrawTongueTip){
+		ofSetColor(255,106,159);
+		ofDrawCircle(tongue.pos, 7);
+		ofSetColor(255);
+	}
 	
 	// TODO:  level display on screen
-	cout<<"game level: " <<iceCream.gameLevel<<endl;
+	cout << "game level: " <<iceCream.gameLevel<<endl;
 	
 	if (bDrawGui){
 		gui.draw();

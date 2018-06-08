@@ -11,6 +11,19 @@
 #include "UI.h"
 #include "Tongue.h"
 
+// TODO: move to params
+// TOP MOUNT KINECT VALUES:
+
+#define DEPTH_TOP 1050
+#define DEPTH_BOTTOM 1800
+#define FULL_LEFT 240
+#define FULL_RIGHT 440
+
+#define CROP_TOP 100
+#define CROP_BOTTOM 360
+#define CROP_LEFT 100
+#define CROP_RIGHT 540
+
 class ofApp : public ofBaseApp{
     
 public:
@@ -46,6 +59,12 @@ public:
     ofxCvGrayscaleImage grayImage; 		// grayscale depth image
     ofxCvGrayscaleImage grayThreshNear; // the near thresholded image
     ofxCvGrayscaleImage grayThreshFar; 	// the far thresholded image
+	ofPolyline tongueOutline;
+	ofPolyline tongueOutlineSmooth;
+	ofPoint tip;
+	ofPoint rawTip;
+	float rawDepth;
+	float tipDepth;
     
     ofxCvContourFinder contourFinder;
     
@@ -58,10 +77,18 @@ public:
     ofSoundPlayer music;
 	
 	ofxPanel gui;
+	ofParameterGroup kinectParams;
+	ofxLabel kinectStatusLabel;
 	ofParameter<int> kinectNearThresh, kinectFarThresh;
-	ofParameter<bool> bDrawKinect;
+	ofParameter<ofVec2f> kinectRoiTL, kinectRoiBR;
+	ofParameter<bool> bUseKinect, bDrawKinect;
+	
+	ofParameterGroup soundParams;
 	ofParameter<float> lickVolume, musicVolume;
+	
+	ofParameterGroup vizParams;
 	ofParameter<float> bgFps;
+	ofParameter<bool> bDrawTongueTip;
 	
 	bool bHasKinect, bDrawGui;
     

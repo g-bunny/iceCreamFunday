@@ -17,6 +17,11 @@ public:
     void setup();
     void update();
     void draw();
+	
+	// param listeners
+	void lickVolumeChanged(float& vol);
+	void musicVolumeChanged(float& vol);
+	void bgFpsChanged(float& fps);
     
     void keyPressed(int key);
     void keyReleased(int key);

@@ -8,8 +8,8 @@ void ofApp::setup(){
 	kinect.setRegistration(true);
 	bHasKinect = kinect.init() && kinect.open();
 	
-	kinectNearThresh.set("kinect near thresh", 255, 0, 255);
-	kinectFarThresh.set("kinect far thresh", 250, 0, 255);
+	kinectNearThresh.set("kinect near thresh", 225, 0, 255);
+	kinectFarThresh.set("kinect far thresh", 147, 0, 255);
 	
 	bDrawKinect.set("draw kinect", false);
 	
@@ -24,7 +24,7 @@ void ofApp::setup(){
 
 	lickSound.load("sounds/slurp2.wav");
 	lickSound.setMultiPlay(false);
-	lickVolume.set("lick volume", 0.7f, 0.0f, 1.0f);
+	lickVolume.set("lick volume", 0.85f, 0.0f, 1.0f);
 	lickSound.setVolume(lickVolume);
 
 	music.load("sounds/ICE CREAM LICK (Original Mix) - Final Mix 1 - Siyoung 2015 (24 Bit MSTR).wav");
@@ -43,6 +43,12 @@ void ofApp::setup(){
 	gui.add(lickVolume);
 	gui.add(musicVolume);
 	gui.add(bgFps);
+	
+	// listeners
+	
+	lickVolume.addListener(this, &ofApp::lickVolumeChanged);
+	musicVolume.addListener(this, &ofApp::musicVolumeChanged);
+	bgFps.addListener(this, &ofApp::bgFpsChanged);
 	
 	
 }
@@ -183,6 +189,21 @@ void ofApp::draw(){
 	if (bDrawGui){
 		gui.draw();
 	}
+}
+
+//--------------------------------------------------------------
+void ofApp::lickVolumeChanged(float& vol){
+	lickSound.setVolume(vol);
+}
+
+//--------------------------------------------------------------
+void ofApp::musicVolumeChanged(float& vol){
+	music.setVolume(vol);
+}
+
+//--------------------------------------------------------------
+void ofApp::bgFpsChanged(float& fps){
+	bg.setFrameRate(fps);
 }
 
 //--------------------------------------------------------------

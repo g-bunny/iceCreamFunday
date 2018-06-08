@@ -54,6 +54,12 @@ public:
     //bool gotLick = false;
     
     ofxKinect kinect;
+	
+	int icLevelNum = 0;
+	int winDuration = 120;
+	
+	
+	// OPENCV
     
     ofxCvColorImage colorImg;
     ofxCvGrayscaleImage grayImage; 		// grayscale depth image
@@ -67,14 +73,14 @@ public:
 	float tipDepth;
     
     ofxCvContourFinder contourFinder;
+	
     
-    int icLevelNum = 0;
-    int winDuration = 120;
-    
-//    bool drawKinect = false;
+	// AUDIO
 	
     ofSoundPlayer lickSound;
     ofSoundPlayer music;
+	
+	// PARAMS
 	
 	ofxPanel gui;
 	ofParameterGroup kinectParams;

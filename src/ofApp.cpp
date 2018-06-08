@@ -2,7 +2,11 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-        
+	
+	ofBackground(0);
+	ofSetVerticalSync(true);
+	
+	
     // KINECT SETUP
     
 	kinect.setRegistration(true);
@@ -15,12 +19,14 @@ void ofApp::setup(){
 	bUseKinect.set("use kinect", bHasKinect);
 	bDrawKinect.set("draw kinect", false);
 	
+	
 	// OPEN CV
 	
 	colorImg.allocate(kinect.width, kinect.height);
 	grayImage.allocate(kinect.width, kinect.height);
 	grayThreshNear.allocate(kinect.width, kinect.height);
 	grayThreshFar.allocate(kinect.width, kinect.height);
+	
 	
 	// AUDIO
 
@@ -35,13 +41,14 @@ void ofApp::setup(){
 	music.setVolume(musicVolume);
     music.play();
 	
-	// params
+	
+	// PARAMS
 	
 	bgFps.set("bg fps", 7.f, 0.1f, 60.f);
 	
 	gui.setup();
 	gui.setName("SETTINGS");
-	gui.setHeaderBackgroundColor(ofColor::purple);
+	gui.setHeaderBackgroundColor(ofColor(50,0,50));
 	gui.setDefaultBackgroundColor(ofColor(50,0,50));
 	
 	gui.add(kinectStatusLabel.setup("kinect status", (bHasKinect ? "OK" : "NONE")));
@@ -66,12 +73,11 @@ void ofApp::setup(){
 	vizParams.add(bDrawTongueTip);
 	gui.add(vizParams);
 	
-	// listeners
+	// -- LISTENERS
 	
 	lickVolume.addListener(this, &ofApp::lickVolumeChanged);
 	musicVolume.addListener(this, &ofApp::musicVolumeChanged);
 	bgFps.addListener(this, &ofApp::bgFpsChanged);
-	
 	
 }
 

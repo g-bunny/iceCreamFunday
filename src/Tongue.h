@@ -22,6 +22,8 @@ public:
     
     bool isLicking = false;
     bool isMovingDown = false;
+	
+	float lastHighestYPos = 0;
     
     
 };

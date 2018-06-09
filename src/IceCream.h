@@ -8,25 +8,75 @@
 
 #include "ofMain.h"
 
-#define MAXIMAGES 75
-#define FLOWIMAGES 14
-#define CHOCOIMAGES 22
-#define WINKIMAGES 17
-#define NUMOFSPRINKLES 4
-#define CHOCOMELT 3
+static const int N_ICECREAM_IMAGES  = 75;
+static const int N_MELT_IMAGES = 75;
+static const int N_REFILL_IMAGES = 14;	// REFILL
+static const int N_CHOCOPOUR_IMAGES = 22;
+static const int N_CHOCOLICK_IMAGES = 3;
+static const int N_WIN_IMAGES = 17;
 
-class IceCream{
+static const int N_SPRINKLE_SPRITES = 4; // sprinkle sprites
+static const float SPRINKLE_SCALE = 0.6f;
+
+static const float CONE_SCALE = 0.5f;
+
+class IceCream {
 public:
+	
     IceCream();
+	void update();
     void draw();
-    void update();
+	
+	bool checkCollision(ofVec2f pos);
+	void drawColliders();	// debug
+	
+	void setFrameBounds(ofRectangle bounds);
+	
+	void resetMeltTimer(float secs);
+	
+	
+	// position
+	ofVec2f origPos;
+	ofVec2f pos;
+	ofVec2f size;
+	ofVec2f vel;	// movement direction, speed
+	ofRectangle frameBounds;
+	float scaleFactor; // converts from image to screen rect
+	
+	// colliders
+	vector<pair<ofRectangle, bool>> colliders;	// collider, on/off
+	
+	// melt timing
+	float meltStartedTime;
+	float meltDuration;
+	bool bMelting;
+	
+	bool bDripDeath;
+	
+	
+	// images
+	ofImage iceCreamAnimation[N_ICECREAM_IMAGES];
+	ofImage meltAnimation[N_MELT_IMAGES];
+	
+	ofImage refillAnimation[N_REFILL_IMAGES];	// soft serve flow
+	ofImage chocoPourAnimation[N_CHOCOPOUR_IMAGES];	// chocolate pour
+	ofImage chocoLickAnimation[N_CHOCOLICK_IMAGES];
+	
+	ofImage winAnimation[N_WIN_IMAGES];		// win level star
+	
+	ofImage sprinkles[N_SPRINKLE_SPRITES];
+	ofVec2f sprinklesPos[N_SPRINKLE_SPRITES];
+	
+	ofImage coneImg;
+	ofImage coneFrontImg;
+	
+	
     void melt();
     void move();
     void drawSprinkles();
     void drawChoco();
     void flow();
-    bool collision(ofVec2f checkPos);
-    
+	
     //gameLevel 1 = level1
     void level1();
     //gameLevel 3 = level2
@@ -59,33 +109,14 @@ public:
     int chocoIndex = 0;
     int chocoSpeed = 9;
     
-    ofImage lickAnimation[MAXIMAGES];
-    ofImage meltAnimation[MAXIMAGES];
-    ofImage flowAnimation[FLOWIMAGES];
-    ofImage chocoAnimation[CHOCOIMAGES];
-    /////////winanimation
-    ofImage winkAnimation[WINKIMAGES];
-    ofImage coneFront;
-    ofImage chocoMeltAnimation[CHOCOMELT];
+
     
-    
-    ////////coneFull needs to be allocated
-    ofImage coneFull;
-    
-    
-    float width, height;
-    float scaleFactor; //converts from image to screen rect
-    
-    //ice cream position
-    ofVec2f origPos;
-    ofVec2f pos;
-    ofVec2f cPos; //easy center
-    
+
+	
     float moveIncrement = 5;
     
     //sprinkles position
-    ofVec2f sprinklePos[NUMOFSPRINKLES];
-    ofImage sprinkle[NUMOFSPRINKLES];
+
     
     //ice cream colliders, 0-3
     ofRectangle icLevels[4];
@@ -109,7 +140,7 @@ public:
     int flowAlignment = 30;
     int flowSpeed = 10;
     
-    bool dripDeath = false;
+//    bool dripDeath = false;
     bool won = false;
     
     ofSoundPlayer winSound;

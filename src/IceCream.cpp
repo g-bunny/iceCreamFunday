@@ -1,73 +1,88 @@
-
-//
-//  IceCream.cpp
-//  tongueGame
-//
-//  Created by Miri Park on 12/8/15.
-//
-//
-
 #include "IceCream.h"
-
-
 
 IceCream::IceCream(){
     
-    //load animations
-    string index;
-    for(int i =0; i< MAXIMAGES; i++){
-        index = ofToString(i + 10);
-        lickAnimation[i].load("iceCream/iceCream000" + index + ".png");
-        meltAnimation[i].load("iceCreamMelt/iceCreamMelt000" + index + "_bottom.png");
+    // LOAD IMAGES & ANIMATIONS
+	
+	// ice cream cone base
+	for(int i =0; i< N_ICECREAM_IMAGES; i++){
+		string file = "ice_cream_cone/ice_cream_cone_" + ofToString(i, 2, '0') + ".png";
+        iceCreamAnimation[i].load(file);
+	}
+	
+	// melt drip
+	for(int i =0; i< N_MELT_IMAGES; i++){
+		string file = "ice_cream_melt/ice_cream_melt_" + ofToString(i, 2, '0') + ".png";
+		meltAnimation[i].load(file);
     }
-    string flowIndex;
-    for(int i =0; i< FLOWIMAGES; i++){
-        flowIndex = ofToString(i + 10);
-        flowAnimation[i].load("iceCreamFlow/iceCream_startNew000" + flowIndex + ".png");
+	
+	// soft serve refill
+    for(int i =0; i< N_REFILL_IMAGES; i++){
+		string file = "ice_cream_cone/ice_cream_refill_" + ofToString(i, 2, '0') + ".png";
+		refillAnimation[i].load(file);
     }
-    string tempChocoIndex;
-    for(int i =0; i< CHOCOIMAGES; i++){
-        tempChocoIndex = ofToString(i);
-        chocoAnimation[i].load("toppings/iceCreamChoco00" + tempChocoIndex + ".png");
-        chocoAnimation[i].resize(1908, 1431);
-        //chocoAnimation[i].crop(446,0,1017,1431);
-        chocoAnimation[i].crop(486, 0, 1057, 1431);
+	
+	// chocolate
+	// pour
+    for(int i =0; i< N_CHOCOPOUR_IMAGES; i++){
+		string file = "toppings/choco_pour_" + ofToString(i, 2, '0') + ".png";
+		chocoPourAnimation[i].load(file);
     }
-    string tempSprindex;
-    for (int i = 0; i < NUMOFSPRINKLES; i++){
-        tempSprindex = ofToString(i + 1);
-        sprinkle[i].load("toppings/sprinkle_" + tempSprindex + ".png");
-        sprinkle[i].resize(sprinkle[i].getWidth() * 0.6, sprinkle[i].getHeight() * 0.6);
+	// lick
+	for (int i = 0; i < N_CHOCOLICK_IMAGES; i++){
+		string file = "toppings/choco_lick_" + ofToString(i, 2, '0') + ".png";
+		chocoLickAnimation[i].load(file);
+	}
+	
+	// sprinkles
+    for (int i = 0; i < N_SPRINKLE_SPRITES; i++){
+        sprinkles[i].load("toppings/sprinkle_" + ofToString(i + 1) + ".png");
+        sprinkles[i].resize(sprinkles[i].getWidth() * SPRINKLE_SCALE, sprinkles[i].getHeight() * SPRINKLE_SCALE);
     }
-    string tempChocoMeltIndex;
-    for (int i = 0; i < CHOCOMELT; i++){
-        tempChocoMeltIndex = ofToString(i);
-        chocoMeltAnimation[i].load("toppings/chocoMelt00" + tempChocoMeltIndex + ".png");
-        chocoMeltAnimation[i].resize(1908, 1431);
-        chocoMeltAnimation[i].crop(486, 0, 1057, 1431);
+	
+	// level clear / win anim
+    for(int i =0; i < N_WIN_IMAGES; i++){
+        winAnimation[i].load("special_fx/wink_" + ofToString(i, 2, '0') + ".png");
     }
-    string tempWinkIndex;
-    for(int i =0; i < WINKIMAGES; i++){
-        tempWinkIndex = ofToString(i);
-        winkAnimation[i].load("specialEffects/wink1_000" + tempWinkIndex + ".png");
-    }
-    
-    coneFront.load("iceCreamConeFront.png");
-    coneFull.load("iceCreamCone.png");
-
-    scaleFactor = 0.5;
-    
-    height = lickAnimation[0].getHeight() * scaleFactor;
-    width = lickAnimation[0].getWidth() * scaleFactor;
-    
-    origPos.x = -width * 0.5 + ofGetWidth()/2;
-    origPos.y = ofGetHeight() - height ;
-    pos.x = origPos.x;
-    pos.y = origPos.y;
-    cPos = ofVec2f(pos.x + width*0.5, pos.y + height*0.5); //easy center pos of image
-    
+	
+	// empty cone image
+    coneImg.load("cone.png");
+	// cone front only
+	coneFrontImg.load("cone_front.png");
+	
+	
+	// POSITIONING
+	
+	size.x = iceCreamAnimation[0].getWidth() * CONE_SCALE;
+    size.y = iceCreamAnimation[0].getHeight() * CONE_SCALE;
+	
+    origPos.x = ofGetWidth() * 0.5f - size.x * 0.5f;
+    origPos.y = ofGetHeight() - size.y;
+	
+	pos = origPos;
+	
+	vel = ofVec2f(0.f);	// stationary at start
+	
+	frameBounds = ofRectangle(0,0, ofGetWidth(), ofGetHeight());
+	
+	
+	// COLLIDERS
+	// positions relative to cone pos
+	
+	ofRectangle c0 = ofRectangle(150.f, 50.f, 150.f, 100.f);
+	ofRectangle c1 = ofRectangle(101.f, 150.f, 250.f, 80.f);
+	ofRectangle c2 = ofRectangle(57.f, 230.f, 350.f, 80.f);
+	ofRectangle c3 = ofRectangle(38.f, 310.f, 400.f, 70.f);
+	
+	colliders.emplace_back(c0, true);
+	colliders.emplace_back(c1, true);
+	colliders.emplace_back(c2, true);
+	colliders.emplace_back(c3, true);
+	
+	
     
     //SETUP icLevels boxes
+	// TODO: remove - tyler
     lvlX[0] = 150;
     lvlX[1] = 101;
     lvlX[2] = 57;
@@ -77,6 +92,9 @@ IceCream::IceCream(){
     icLevels[1].set(pos.x + lvlX[1], pos.y + 150, 250, 80);
     icLevels[2].set(pos.x + lvlX[2], pos.y + 230, 350, 80);
     icLevels[3].set(pos.x + lvlX[3], pos.y + 310, 400, 70);
+	
+	
+	// AUDIO
     
     winSound.load("sounds/win.wav");
     winSound.setVolume(0.85f);
@@ -85,33 +103,92 @@ IceCream::IceCream(){
     loseSound.load("sounds/lose.wav");
     loseSound.setVolume(0.85f);
     loseSound.setMultiPlay(false);
+	
+	
+	// SETUP
+	
+	bMelting = false;
+	meltStartedTime = 0.f;
+	meltDuration = -1.f;
+	
+	bDripDeath = false;
 }
 
 void IceCream::draw(){
-    lickAnimation[lickIndex].draw(pos.x, pos.y, width, height);
-    coneFront.draw(pos.x - coneAlignment, pos.y, width, height);
-    meltAnimation[meltIndex].draw(pos.x, pos.y, width, height);
-    
-    ofPushStyle();
-    ofSetColor(255,0,0);
-    ofNoFill();
-    // **** collision detection rectangles ****
-//    ofRect(pos.x, pos.y, width, height);
-//    for (int i=0; i<4; i++){
-//        ofRect(icLevels[i].getTopLeft(), icLevels[i].getWidth(), icLevels[i].getHeight());
-//    }
-    ofPopStyle();
-    if (dripDeath){
-        resetWholeGame();
-    }
+	
+	// draw base cone
+	iceCreamAnimation[lickIndex].draw(pos, size.x, size.y);
+	
+//    coneFrontImg.draw(pos.x, pos.y, size.x, size.y);
+	
+	// draw melt animation
+    meltAnimation[meltIndex].draw(pos, size.x, size.y);
+	
+}
+
+void IceCream::drawColliders(){	// for debug
+	
+	ofPushStyle();
+	ofSetColor(0,200,100);
+	ofNoFill();
+	ofDrawRectangle(pos, size.x, size.y);	// whole cone
+	ofPushMatrix();
+	ofTranslate(pos);			// colliders relative to cone
+	for (auto& col : colliders){
+		ofDrawRectangle(col.first);
+	}
+	ofPopMatrix();
+	ofPopStyle();
 }
 
 void IceCream::update(){
-    if (ofGetFrameNum() % meltRate == 0){
-        meltIndex = (meltIndex + 1) % MAXIMAGES;
-    }
+	
+	// move
+	pos += vel;
+	
+	// bounce off bounds
+	if ( pos.x > frameBounds.getRight() - size.x ) {
+		pos.x = frameBounds.getRight() - size.x;
+		vel.x *= -1;
+	} else if ( pos.x < frameBounds.getLeft() ) {
+		pos.x = frameBounds.getLeft();
+		vel.x *= -1;
+	}
+	if ( pos.y > frameBounds.getBottom() - size.y ) {
+		pos.y = frameBounds.getBottom() - size.y;
+		vel.y *= -1;
+	} else if ( pos.y < frameBounds.getTop() ) {
+		pos.y = frameBounds.getTop();
+		vel.y *= -1;
+	}
+	
+	// increment melt
+	if (bMelting){
+		float t = ofGetElapsedTimef();
+		int meltIndex =
+		ofMap(t, meltStartedTime, meltStartedTime+meltDuration, 0, N_MELT_IMAGES, true);
+		if (meltIndex >= N_MELT_IMAGES){
+			meltIndex = N_MELT_IMAGES-1;
+			bDripDeath = true;
+		}
+	} else {
+		meltIndex = 0;
+	}
+	
+	// game over signal
+	
+	if (bDripDeath){
+		resetWholeGame();	// TODO: move to ofApp
+	}
+	
+	
+//    if (ofGetFrameNum() % meltRate == 0){
+//        meltIndex = (meltIndex + 1) % N_MELT_IMAGES;
+//    }
 
     //update collider positions
+	// TODO: remove
+	// tyler - shouldn't be needed, colliders are relative to pos
     if (lickState <1){
         icLevels[0].setX(pos.x + lvlX[0]);
         icLevels[1].setX(pos.x + lvlX[1]);
@@ -194,30 +271,36 @@ void IceCream::update(){
     }
     
     cout<<"melt? "<<meltIndex<<endl;
-    if(meltIndex == MAXIMAGES - 1){
-        dripDeath = true;
+    if(meltIndex == N_MELT_IMAGES - 1){
+        bDripDeath = true;
     }
 }
 
+
 void IceCream::move(){
     pos.x += moveIncrement;
-    cPos.x = pos.x + width*0.5;
-    if (pos.x > ofGetWidth() - width || pos.x < 0){
+    if (pos.x > ofGetWidth() - size.x || pos.x < 0){
         moveIncrement *= -1;
     }
 }
 
-bool IceCream::collision(ofVec2f checkPos){
-    for (int i=0; i<4; i++){
-        //check for collision
-        if ((checkPos.x > icLevels[i].getMinX()) &&
-            (checkPos.x < icLevels[i].getMaxX()) &&
-            (checkPos.y > icLevels[i].getMinY()) &&
-            (checkPos.y < icLevels[i].getMaxY())){
-            
-            return true;
-        }
-    }
+bool IceCream::checkCollision(ofVec2f pos){
+//    for (int i=0; i<4; i++){
+//        //check for collision
+//        if ((checkPos.x > icLevels[i].getMinX()) &&
+//            (checkPos.x < icLevels[i].getMaxX()) &&
+//            (checkPos.y > icLevels[i].getMinY()) &&
+//            (checkPos.y < icLevels[i].getMaxY())){
+//
+//            return true;
+//        }
+//    }
+	for (auto& collider : colliders){
+		if (collider.second && collider.first.inside(pos)){
+			return true;
+		}
+	}
+	return false;
 }
 
 void IceCream::level1(){
@@ -356,7 +439,7 @@ void IceCream::drawChoco(){
     if(ofGetFrameNum() % chocoSpeed == 0){
         chocoIndex = chocoIndex + 1;
     }
-    lickAnimation[1].draw(pos.x, pos.y, width, height);
+    iceCreamAnimation[1].draw(pos.x, pos.y, width, height);
     chocoAnimation[chocoIndex].draw(pos.x- coneAlignment, pos.y, width, height);
     if(chocoIndex == CHOCOIMAGES){
         chocoAnimation[CHOCOIMAGES - 1].draw(pos.x- coneAlignment, pos.y, width, height);

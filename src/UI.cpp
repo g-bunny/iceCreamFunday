@@ -28,6 +28,7 @@ void UI::update(){
 
 void UI::draw(){
 	
+	// calc scaling and pos
 	ofVec2f wS = ofVec2f(ofGetWidth(), ofGetHeight());
 	float scaleFactor = wS.x/upperTeeth.getWidth();
 
@@ -36,11 +37,13 @@ void UI::draw(){
 	ofVec2f lP = ofVec2f(0, wS.y - lowerTeeth.getHeight() + 200);
 	ofVec2f lS = ofVec2f(wS.x, lowerTeeth.getHeight() * scaleFactor);
 	
+	// draw teeth
 	if (closeIndex < 0 || closeIndex >= N_CLOSE_IMGS){
 		upperTeeth.draw(uP, uS.x, uS.y);
 		lowerTeeth.draw(lP, lS.x, lS.y);
 	}
 	else {
+		// draw mouth closing
 		float t = ofGetElapsedTimef();
 		if (t - closeFrameDelay >= tLastCloseFrame){
 			tLastCloseFrame = t;

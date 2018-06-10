@@ -193,7 +193,7 @@ void ofApp::update(){
         if (iceCream.gotLick == false){
             
             /* check if tongue is touching ice cream */
-            if (iceCream.collision(tongue.pos)){
+            if (iceCream.checkCollision(tongue.pos)){
 				
 				iceCream.lickState++;
                 cout << "licked ice cream: " << iceCream.lickState << endl;
@@ -227,7 +227,7 @@ void ofApp::draw(){
 	
 	if (iceCream.gameLevel == 0 ||iceCream.gameLevel == 2||iceCream.gameLevel == 4 || iceCream.gameLevel ==6){
 		iceCream.flowing = true;
-		iceCream.dripDeath = false;
+        iceCream.bDripDeath = false;
 	}
 	if (iceCream.gameLevel >= 8){
 		iceCream.gameLevel = 0;

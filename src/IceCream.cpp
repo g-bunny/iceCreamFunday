@@ -18,7 +18,7 @@ IceCream::IceCream(){
 	
 	// soft serve refill
     for(int i =0; i< N_REFILL_IMAGES; i++){
-		string file = "ice_cream_cone/ice_cream_refill_" + ofToString(i, 2, '0') + ".png";
+		string file = "ice_cream_refill/ice_cream_refill_" + ofToString(i, 2, '0') + ".png";
 		refillAnimation[i].load(file);
     }
 	
@@ -36,7 +36,7 @@ IceCream::IceCream(){
 	
 	// sprinkles
     for (int i = 0; i < N_SPRINKLE_SPRITES; i++){
-        sprinkles[i].load("toppings/sprinkle_" + ofToString(i + 1) + ".png");
+        sprinkles[i].load("toppings/sprinkle_" + ofToString(i, 2, '0') + ".png");
         sprinkles[i].resize(sprinkles[i].getWidth() * SPRINKLE_SCALE, sprinkles[i].getHeight() * SPRINKLE_SCALE);
     }
 	
@@ -326,13 +326,13 @@ void IceCream::level4(){
     draw();
     cout<<"lick state: "<<lickState<<endl;
     if (lickState ==0){
-        chocoMeltAnimation[0].draw(pos.x, pos.y, width, height);
+        chocoLickAnimation[0].draw(pos.x, pos.y, ofGetWidth(), ofGetHeight());
     }
     if (lickState == 1){
-        chocoMeltAnimation[1].draw(pos.x, pos.y + 10, width, height);
+        chocoLickAnimation[1].draw(pos.x, pos.y + 10, ofGetWidth(), ofGetHeight());
     }
     if (lickState == 2){
-        chocoMeltAnimation[2].draw(pos.x, pos.y + 30, width, height);
+        chocoLickAnimation[2].draw(pos.x, pos.y + 30, ofGetWidth(), ofGetHeight());
     }
 //    if (lickState ==10){
 //        win();
@@ -369,23 +369,22 @@ void IceCream::resetWholeGame(){
 }
 
 void IceCream::flow(){
-    coneFull.draw(pos.x - coneAlignment, pos.y, width, height);
+    coneFrontImg.draw(pos.x - coneAlignment, pos.y, ofGetWidth(), ofGetHeight());
 
-    if (ofGetFrameNum() % flowSpeed == 0){
+    if (ofGetFrameNum() % flowSpeed == 0 && flowing == true){
         flowIndex = flowIndex + 1;
     }
-    flowAnimation[flowIndex].draw(pos.x - flowAlignment,pos.y,width,height);
-    if (flowIndex == FLOWIMAGES ){
+    refillAnimation[flowIndex].draw(pos.x - flowAlignment,pos.y,ofGetWidth(),ofGetHeight());
+    if (flowIndex >= N_REFILL_IMAGES ){
         flowing = false;
-
-            gameLevel +=1;
+        gameLevel +=1;
     }
     cout << "flow index " << flowIndex << endl;
     lickState = 0;
 }
 
 void IceCream::win(){
-    if(ofGetFrameNum() % flowSpeed == 0 && winkIndex < WINKIMAGES - 1){
+    if(ofGetFrameNum() % flowSpeed == 0 && winkIndex < N_WIN_IMAGES - 1){
         winkIndex = winkIndex + 1;
     }
     if(winkIndex == 6){
@@ -395,8 +394,8 @@ void IceCream::win(){
 //        winkIndex = 0;
 //    }
     cout<<"wink index: " << winkIndex<<endl;
-    winkAnimation[winkIndex].draw(pos.x, pos.y, width, height);
-    if (winkIndex >= WINKIMAGES -1){
+    winAnimation[winkIndex].draw(pos.x, pos.y, ofGetWidth(), ofGetHeight());
+    if (winkIndex >= N_WIN_IMAGES -1){
         resetWholeGame();
     }
 }
@@ -416,22 +415,22 @@ void IceCream::brainFreeze(){
 
 void IceCream::drawSprinkles(){
     if (lickState ==0){
-        sprinkle[0].draw(pos.x + lvlX[0]+ 20, pos.y + 50 + 20);
+        sprinkles[0].draw(pos.x + lvlX[0]+ 20, pos.y + 50 + 20);
     }
     if (lickState <= 2){
-        sprinkle[1].draw(pos.x + lvlX[1] + 80, pos.y + 150 + 30);
-        sprinkle[0].draw(pos.x + lvlX[1] + 180, pos.y + 150 + 50);
+        sprinkles[1].draw(pos.x + lvlX[1] + 80, pos.y + 150 + 30);
+        sprinkles[0].draw(pos.x + lvlX[1] + 180, pos.y + 150 + 50);
     }
     if (lickState <= 5){
-        sprinkle[2].draw(pos.x + lvlX[2] + 130, pos.y + 230 + 50);
-        sprinkle[3].draw(pos.x + lvlX[2] + 30, pos.y + 230 + 50);
-        sprinkle[1].draw(pos.x + lvlX[2] + 230, pos.y + 230 + 50);
+        sprinkles[2].draw(pos.x + lvlX[2] + 130, pos.y + 230 + 50);
+        sprinkles[3].draw(pos.x + lvlX[2] + 30, pos.y + 230 + 50);
+        sprinkles[1].draw(pos.x + lvlX[2] + 230, pos.y + 230 + 50);
     }
     if (lickState <=8){
-        sprinkle[3].draw(pos.x + lvlX[3] + 300, pos.y + 310 + 60);
-        sprinkle[1].draw(pos.x + lvlX[3] + 100, pos.y + 310 + 50);
-        sprinkle[2].draw(pos.x + lvlX[3] + 200, pos.y + 310 + 40);
-        sprinkle[0].draw(pos.x + lvlX[3] + 360, pos.y + 310 + 30);
+        sprinkles[3].draw(pos.x + lvlX[3] + 300, pos.y + 310 + 60);
+        sprinkles[1].draw(pos.x + lvlX[3] + 100, pos.y + 310 + 50);
+        sprinkles[2].draw(pos.x + lvlX[3] + 200, pos.y + 310 + 40);
+        sprinkles[0].draw(pos.x + lvlX[3] + 360, pos.y + 310 + 30);
     }
 }
 
@@ -439,10 +438,10 @@ void IceCream::drawChoco(){
     if(ofGetFrameNum() % chocoSpeed == 0){
         chocoIndex = chocoIndex + 1;
     }
-    iceCreamAnimation[1].draw(pos.x, pos.y, width, height);
-    chocoAnimation[chocoIndex].draw(pos.x- coneAlignment, pos.y, width, height);
-    if(chocoIndex == CHOCOIMAGES){
-        chocoAnimation[CHOCOIMAGES - 1].draw(pos.x- coneAlignment, pos.y, width, height);
+    iceCreamAnimation[1].draw(pos.x, pos.y, ofGetWidth(), ofGetHeight());
+    chocoPourAnimation[chocoIndex].draw(pos.x- coneAlignment, pos.y, ofGetWidth(), ofGetHeight());
+    if(chocoIndex == N_CHOCOPOUR_IMAGES){
+        chocoPourAnimation[N_CHOCOPOUR_IMAGES - 1].draw(pos.x- coneAlignment, pos.y, ofGetWidth(), ofGetHeight());
         gameLevel +=1;
         reset();
     }

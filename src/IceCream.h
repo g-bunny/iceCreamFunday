@@ -34,7 +34,6 @@ public:
 	
 	void resetMeltTimer(float secs);
 	
-	
 	// position
 	ofVec2f origPos;
 	ofVec2f pos;

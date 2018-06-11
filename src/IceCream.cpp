@@ -326,13 +326,13 @@ void IceCream::level4(){
     draw();
     cout<<"lick state: "<<lickState<<endl;
     if (lickState ==0){
-        chocoLickAnimation[0].draw(pos.x, pos.y, ofGetWidth(), ofGetHeight());
+        chocoLickAnimation[0].draw(pos.x, pos.y, chocoLickAnimation[0].getWidth() * CONE_SCALE, chocoLickAnimation[0].getHeight() * CONE_SCALE);
     }
     if (lickState == 1){
-        chocoLickAnimation[1].draw(pos.x, pos.y + 10, ofGetWidth(), ofGetHeight());
+        chocoLickAnimation[1].draw(pos.x, pos.y + 10, chocoLickAnimation[0].getWidth() * CONE_SCALE, chocoLickAnimation[0].getHeight() * CONE_SCALE);
     }
     if (lickState == 2){
-        chocoLickAnimation[2].draw(pos.x, pos.y + 30, ofGetWidth(), ofGetHeight());
+        chocoLickAnimation[2].draw(pos.x, pos.y + 30, chocoLickAnimation[0].getWidth() * CONE_SCALE, chocoLickAnimation[0].getHeight() * CONE_SCALE);
     }
 //    if (lickState ==10){
 //        win();
@@ -369,12 +369,12 @@ void IceCream::resetWholeGame(){
 }
 
 void IceCream::flow(){
-    coneFrontImg.draw(pos.x - coneAlignment, pos.y, ofGetWidth(), ofGetHeight());
+    coneFrontImg.draw(pos.x - coneAlignment, pos.y, coneFrontImg.getWidth() * CONE_SCALE, coneFrontImg.getHeight() * CONE_SCALE);
 
     if (ofGetFrameNum() % flowSpeed == 0 && flowing == true){
         flowIndex = flowIndex + 1;
     }
-    refillAnimation[flowIndex].draw(pos.x - flowAlignment,pos.y,ofGetWidth(),ofGetHeight());
+    refillAnimation[flowIndex].draw(pos.x - flowAlignment,pos.y,refillAnimation[0].getWidth() * CONE_SCALE,refillAnimation[0].getHeight() * CONE_SCALE);
     if (flowIndex >= N_REFILL_IMAGES ){
         flowing = false;
         gameLevel +=1;
@@ -394,7 +394,7 @@ void IceCream::win(){
 //        winkIndex = 0;
 //    }
     cout<<"wink index: " << winkIndex<<endl;
-    winAnimation[winkIndex].draw(pos.x, pos.y, ofGetWidth(), ofGetHeight());
+    winAnimation[winkIndex].draw(pos.x, pos.y, winAnimation[0].getWidth() * CONE_SCALE, winAnimation[0].getHeight() * CONE_SCALE);
     if (winkIndex >= N_WIN_IMAGES -1){
         resetWholeGame();
     }
@@ -438,10 +438,10 @@ void IceCream::drawChoco(){
     if(ofGetFrameNum() % chocoSpeed == 0){
         chocoIndex = chocoIndex + 1;
     }
-    iceCreamAnimation[1].draw(pos.x, pos.y, ofGetWidth(), ofGetHeight());
-    chocoPourAnimation[chocoIndex].draw(pos.x- coneAlignment, pos.y, ofGetWidth(), ofGetHeight());
+    iceCreamAnimation[1].draw(pos.x, pos.y, size.x, size.y);
+    chocoPourAnimation[chocoIndex].draw(pos.x- coneAlignment, pos.y, chocoPourAnimation[0].getWidth() * CONE_SCALE, chocoPourAnimation[0].getHeight() * CONE_SCALE);
     if(chocoIndex == N_CHOCOPOUR_IMAGES){
-        chocoPourAnimation[N_CHOCOPOUR_IMAGES - 1].draw(pos.x- coneAlignment, pos.y, ofGetWidth(), ofGetHeight());
+        chocoPourAnimation[N_CHOCOPOUR_IMAGES - 1].draw(pos.x- coneAlignment, pos.y, chocoPourAnimation[0].getWidth() * CONE_SCALE, chocoPourAnimation[0].getHeight() * CONE_SCALE);
         gameLevel +=1;
         reset();
     }
